@@ -3,13 +3,14 @@ OVERSEER chat bot
 This is the spaceship chat bot, speaking and guiding our crew aboard the Blue Dwarf.
 
 It was created by Skyler Alderson, Robert Barnstead, Abhiek Bist, and Livia Zalilla (as well as David Brideson before they dropped the class).
+Additions for the Individual Project were done by Skyler Alderson.
 
 # Process of Creation
 We decided to create a spaceship bot that will help the passengers aboard the Blue Dwarf help navigate and live aboard the spaceship. We started by creating a dictionary .txt file that contained all the Key values that passengers might be concerned about and a set of who/what/when/where/why/how and generic responses that relate to the topic. In addition to the Key values, we also created a list of synonyms that would pair with the Key value so the bot could detect a wider range of inputs. After that we needed a way to read the dictionary file, so we created a class that reads the dictionary file and stores the values into multiple hash maps. Next, we used the hash maps we previously created to parse a simple user input from the console and give a response based on whether the bot could detect a key word and a who/what/when/where/why/how. If the bot only detected a key word and nothing else, it would then give a generic response. If nothing was detected the bot would inform the user. This is where we finished of our first iteration of the bot and concluded Assignment 2. To begin our next iteration, we expanded our dictionary to include another topic. We also created a GUI so that we were not simply using the console to get the user’s input. To make the bot’s synonym recognition more sophisticated and not simply hard coded in the dictionary we used the WordNet dictionary and JAWS API to get synonyms from the key value provided. We then integrated named entity recognition using Stanford’s Named Entity Recognition API. Our last feature we added was a sentiment analysis using Socher et al’s sentinment model. This allows the bot to detect negativity in the users input and if it is determent that the input was negative the bot will give a generic response that acknowledges the user’s frustration. Finally, we created a multitude of JUnit tests to make sure that our bot was working properly.
 
 # Code Description
 ## Class: Startup
-The Startup class loads the Dictionary into a HashMap, then enters the primary loops for grabbing the user's input before replying via calling functions from the classes below.
+The Startup class loads the Dictionary into a HashMap, then enters the primary loops for grabbing the user's input before replying via calling functions from the classes below. It also stitches together a response from either the Dictionary, or by calling APIs (see: APIs).
 
 
 ## Class: ReadFile
@@ -17,7 +18,7 @@ The ReadFile class loads a text file. Depending on the function called, it will 
 
 
 ## Class: ParseInput
-The ParseInput class contains several functions used in gathering, cleaning, and extracting the keys from the user's input. After gathering a String from the user, it will deliminate it into an array of Strings where each data item is a singlular word. It will clean each item in the String array by removing problematic punctuation and whitespace. Finally, each word is compared to a list of keys; if there is a match, the key is returned.
+The ParseInput class contains several functions used in gathering, cleaning, and extracting the keys from the user's input. After gathering a String from the user, it will deliminate it into an array of Strings where each data item is a singlular word. It will clean each item in the String array by removing problematic punctuation and whitespace. Finally, each word is compared to a list of keys; if there is a match, the key is returned. Alternatively, if any word matches a special key, the special key is set as the first key. Depending on the special key, it may return the user input following the special key as the second key (used in APIs).
 
 
 ## Class: Key
@@ -45,5 +46,11 @@ example: User > I am angry / User > I hate this place
 ## Text file: Dictionary
 A custom formatted text file that contains an important word with a colon seperating it from its synonyms. The following indented lines give the sub-key (a "W" such as who, what, where...) where a colon then seperates it from the response.
 
+
 ## JUnit Tests
 There are four classes that are specifically used for JUnit testing. The StartupTest class, ReadFileTest class, ParseInputTest class and the KeyTest class. The StartupTest class tests a variety of different cases all related to fetching responses. The ReadFileTest class was not entirely important as if the file was incorrect, it will throw an error or a FileNotFound. The ParseInputTest class takes a wide variety of potential user inputs and checks to see how the bot responds. Lastly, the KeyTest class simply tests all of the get and set functions in the Key class.
+
+
+# APIs
+## Wikipedia API & Wolfram Alpha API
+Both API serve the same goal and follow the same design patterns. They aim to imporve OVERSEER by making it better at its role of managing a research space station; particularly, it allows crew to instantly search up information through OS (by performing queries on either of search engine Wikipedia or Wolfram Alpha). In the ParseInput.parseInput(), if a special key is detected ("what is/are " for Wolfram Alpha and "define " for wikipedia) it sets the first key to the special key and set the second key as whatever substring follows the first key. Then, when the keys are passed to Startup.fetchResponse(), the special keys are detected and the second key is used to form a url query to the relevant site. The appropriate site responds with with a byte stream representing an XML form, which OVERSEER converts to a String and displays.

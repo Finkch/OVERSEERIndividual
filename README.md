@@ -2,6 +2,8 @@
 OVERSEER chat bot 
 This is the spaceship chat bot, speaking and guiding our crew aboard the Blue Dwarf.
 
+URL to the GitHub page: https://github.com/Finkch/OVERSEERIndividual
+
 It was created by Skyler Alderson, Robert Barnstead, Abhiek Bist, and Livia Zalilla (as well as David Brideson before they dropped the class).
 Additions for the Individual Project were done by Skyler Alderson.
 
